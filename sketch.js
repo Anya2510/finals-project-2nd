@@ -1,7 +1,8 @@
 
 //creating variables
 var bg , player_img , player , player_jump , invisibleGround , player_run;
-var  enemy_jump,enemy_run,enemy;
+var  enemy_jump,enemy_run,enemy,enemyGroup;
+var score=0
 function preload (){
 bg=loadImage("image/bg.png");
 player_img=loadAnimation("image/fight1.png","image/fight2.png","image/fight3.png","image/stand1.png","image/stand2.png")
@@ -19,8 +20,9 @@ player.addAnimation("jump",player_jump)
 invisibleGround=createSprite(600,500,1200,50);
 invisibleGround.visible=false;
 player.addAnimation("run",player_run)
+enemyGroup=new Group();
 }
-console.log(player.y);
+//console.log(player.y);
 function draw (){
   background(bg);
 if (keyDown("space")){
@@ -37,30 +39,57 @@ if (keyDown("RIGHT_ARROW")){
 else{
   player.velocityX=0;
 }
+score=World.frameCount
 player.setCollider("circle",0,0,20)
 player.collide(invisibleGround);
 player.velocityY=player.velocityY+2
 //player.debug=true;
-spawnEnemies();
+//spawnEnemies();
 spawnEnemies2();
+if(player.isTouching(enemyGroup)){
+  enemyGroup.velocityY=0;
+  //enemyGroup.visibleEach=false;
+  console.log("working")
+} 
+else{
+  //enemyGroup.visibleEach=true;
+  enemyGroup.velocityY=2;
+}
+if (player.x>1200){
+  player.x=0;
+}
   drawSprites();
+  textSize(20);
+  fill("white")
+  text("Score:"+score,20,20)
 }
-function spawnEnemies(){
-  if(World.frameCount%60===0){
-  var rand=Math.round(random(150,600));
- var enemy=createSprite(1200,rand,50,50);
-enemy.addAnimation("run",enemy_run);
-enemy.scale=0.4;
-  enemy.velocityX=-10;
-}
-}
+//function spawnEnemies(){
+ // if(World.frameCount%60===0){
+  //var rand=Math.round(random(150,600));
+ //var enemy=createSprite(1200,rand,50,50);
+//enemy.addAnimation("run",enemy_run);
+//enemy.scale=0.4;
+  //enemy.velocityX=-10;
+//}
+//}
 
 function spawnEnemies2 (){
-  if(World.frameCount%40===0){
+  if(World.frameCount%30===0){
     var rand1=Math.round(random(100,1000));
     var enemy1=createSprite(rand1,0,50,50);
     enemy1.addAnimation("run",enemy_run);
     enemy1.scale=0.4;
     enemy1.velocityY=10;
+    enemyGroup.add(enemy1);
   }
+}
+
+function isTouching(){
+if(player.y-enemy1.y<player.height/2+enemy1.height/2
+  && enemy1.y-player.y<player.height/2+enemy1.height/2){
+ return true;
+}
+else {
+  return false;
+}
 }
